@@ -6,7 +6,7 @@ from App.models import Obj
 from rest_framework import viewsets
 from rest_framework import permissions
 from App.serializers import objSerializer
-
+from django.http import JsonResponse
 
 def recieve(request):
     #when we recieve a Post request
@@ -18,11 +18,28 @@ def recieve(request):
             obj.nameCapteur= request.POST.get('capteur')
             obj.donnee = request.POST.get('valeur')
             obj.save()                                      #save it as an obj in the dataBase
-            return HttpResponse('<h1>Data saved</h1>')
+            
+            data = {
+                'micro': request.POST.get('micro'),
+                'capteur': request.POST.get('capteur'),
+                'valeur': request.POST.get('valeur'), 
+            }
+            print(data)
+            return JsonResponse(data)
         
     #when we recieve a Get request
     if request.method == 'GET':
-        return render(request,'hello.html')
+        myObjs = Obj.objects.all()
+        #return render(request,"hello.html")
+        data = {
+                    'micro': request.POST.get('micro'),
+                    'capteur': request.POST.get('capteur'),
+                    'valeur': request.POST.get('valeur'), 
+                }
+        return JsonResponse(data)
+    
+
+
 
 #retourne tous les informations de la base de donnees et afficher l aide de "objSerializer"
 class objViewSet(viewsets.ModelViewSet):
